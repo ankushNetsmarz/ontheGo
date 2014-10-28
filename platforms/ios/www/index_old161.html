@@ -1,0 +1,2303 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1.0">
+		<meta property="og:title" content="" />
+		<meta property="og:url" content="" />
+		<meta property="og:site_name" content="" />
+		<meta property="og:image" content="" /> 
+		<meta property="og:description" content="I found this listing using the multi-listing real estate service at http://realtyonthego.bb/ and thought you would find it interesting." /> 
+		<meta name="description" content=" I found this listing using the multi-listing real estate service at http://realtyonthego.bb/ and thought you would find it interesting.">
+		<meta name="keywords" content="Barbados Real estate, Residences for Sale, Long term rental, Apartment for rent, Commercial properties, Short term rental">
+		<title>Realty On The Go</title>
+		<meta property="title" content="" />
+		<meta property="image" content="" />
+		<meta property="site_name" content="" />
+		<link rel="shortcut icon" href="images/favicon.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css" />
+		<link rel="stylesheet" href="css/photoswipe.css" />
+		<link rel="stylesheet" href="css/mobile-style.css" />
+		<link rel="stylesheet" href="css/mobile-dev.css" />
+		<!-- <script type="text/javascript">var switchTo5x=false;</script>
+		<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+		<script type="text/javascript">stLight.options({publisher: "a8e8623f-e376-49f6-93d8-879579a30d84", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+		--><script src="js/jquery-1.9.1.min.js"></script>
+		<script src="js/jquery.validate.js"></script>
+		<script src="js/jquery.mobile-1.3.2.min.js"></script>
+		<script src="js/mobile.js"></script>
+		<script src="js/klass.min.js"></script>
+		<script src="js/code.photoswipe-3.0.5.min.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+		<script type="text/javascript">
+
+			var instance;
+			var current_page;
+			var markersArray = [];
+			//sessionStorage.WEBROOT =  "http://localhost/realestate/app/webroot/phpThumb/phpThumb.php?src=../";
+			
+
+			//sessionStorage.WEBROOT = "http://devbox.com/real_estate/app/webroot/phpThumb/phpThumb.php?src=../";
+			//sessionStorage.WEBROOT = "http://192.168.1.166/real_estate/app/webroot/phpThumb/phpThumb.php?src=../";
+
+			sessionStorage.WEBROOT = "http://realtyonthego.bb/app/webroot/phpThumb/phpThumb.php?src=../";
+			var info_thumb = "&w=294&h=153&f=png";
+			var list_thumb = "&w=100&h=63&f=png";
+			
+			sessionStorage.msg =  "";
+			var marker;
+			var map_switcher = "map";
+			var infowindow = new google.maps.InfoWindow();
+			var mapOptions = {
+				center: new google.maps.LatLng(13.2017274, -59.637713399999996),
+				zoom: 11,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+			
+			var url = "http://192.168.1.166/real_estate/ws/add/";
+			//var url = "http://devbox.com/real_estate/ws/add/";
+			//var url = "http://realtyonthego.bb/ws/add/";
+
+
+			function side_link(){
+			
+				if( sessionStorage.USERID !="" && typeof sessionStorage.USERID !="undefined"  && sessionStorage.USERID != null ){
+					var nme = sessionStorage.USERNAME;
+					if (sessionStorage.USERNAME.length >15){
+						nme = sessionStorage.USERNAME.slice(0,14)+"...";
+					}
+					$( '.log_li' ).addClass('user_li');
+					$( '.login_link' ).html(nme+'<img class="logout" src="images/logout.png">');
+					$( '.my_accnt_link' ).show();
+					if(sessionStorage.NOTIFICATION_COUNT > 0 ){
+						$( '.ui-li-count' ).show();	
+						$( '.ui-li-count' ).html(sessionStorage.NOTIFICATION_COUNT);
+					}else{
+						$( '.ui-li-count' ).hide();		
+					}			
+				} else {
+					$( '.login_link' ).html('Login');
+					$( '.log_li' ).removeClass('user_li');
+					$( '.my_accnt_link' ).hide();
+					$( '.ui-li-count' ).hide();					
+				}	
+				//$('.nav-search').listview('refresh');					
+			}
+			function toUSD(number) {
+			    var number = number.toString(), 
+			    dollars = number.split('.')[0], 
+			    //cents = (number.split('.')[1] || '') +'00';
+			    dollars = dollars.split('').reverse().join('')
+			        .replace(/(\d{3}(?!$))/g, '$1,')
+			        .split('').reverse().join('');
+			    return dollars;
+			}
+			function numberWithCommas(x) {	
+			   //return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				var parts = x.toString().split(".");
+			    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			    return parts.join(".");
+			}
+		</script>	
+
+		<div data-role="page" class="jqm-demos ui-responsive-panel" id="home_page" >
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    		  			<h1>Realty On The Go</h1>
+  			</div>
+  			<div id="home-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+  					<p id="home-overlay_msg"></p>
+				</div>
+				 <div data-role="content" class="" >
+				 <ul data-role="listview" data-inset="true" class="property_menu" id="home_property_type">
+				      <li><a href="#" onclick="home_page('Residences for Sale')"><img src="images/c-icon-sale.png" alt="" class="ui-li-icon ui-corner-none">Residences for Sale</a></li>
+				      <li><a href="#" onclick="home_page('Long term rental')"><img src="images/c-icon-rent.png" alt="" class="ui-li-icon">Long Term Rental</a></li>
+				      <li><a href="#" onclick="home_page('Short term rental')"><img src="images/c-icon-bed.png" alt="" class="ui-li-icon">Short Term Rental</a></li>
+				      <li><a href="#" onclick="home_page('Commercial Property')"><img src="images/c-icon-build.png" alt="" class="ui-li-icon">Commercial Properties</a></li>
+				      <li><a href="#" onclick="home_page('Residential Land')"><img src="images/c-icon-vacant.png" alt="" class="ui-li-icon">Residential Land</a></li>
+				      <li><a href="#" class="side_propety_search"><img src="images/c-icon-search.png" alt="Property Search" class="ui-li-icon ui-corner-none">Property Search</a></li>
+    				</ul>  		 		
+  			</div> 
+		<!--aa<ul data-role="listview" data-inset="true" class="property_menu" id="home_property_type">
+				      <li><a href="#" onclick="home_page('Homes for Sale')"><img src="images/c-icon-sale.png" alt="Residences for Sale" class="ui-li-icon ui-corner-none">Residences for Sale</a></li>
+				      <li><a href="#" onclick="home_page('Homes for Rent')"><img src="images/c-icon-rent.png" alt="Long Term Rental" class="ui-li-icon">Long Term Rental</a></li>
+				      <li><a href="#" onclick="home_page('Rooms for Rent')"><img src="images/c-icon-bed.png" alt="Short Term Rental" class="ui-li-icon">Short Term Rental</a></li>
+				      <li><a href="#" onclick="home_page('Commercial Property')"><img src="images/c-icon-build.png" alt="Commercial Properties" class="ui-li-icon">Commercial Properties</a></li>
+				      <li><a href="#" onclick="home_page('Land for Sale')"><img src="images/c-icon-vacant.png" alt="Land for Sale" class="ui-li-icon">Land for Sale</a></li>
+				      <li><a href="#" class="side_propety_search"><img src="images/c-icon-search.png" alt="Property Search" class="ui-li-icon ui-corner-none">Property Search</a></li>
+    				</ul> 			
+    				</div>--> 
+  			<!--<div data-role="content" class="" >
+    			<ul data-role="listview" data-inset="true" class="property_menu" id="home_property_type">
+      				<li><a href="#" onclick="home_page('Homes for Sale')"><img src="images/home.png" alt=""   id="home_for_sale" class="ui-li-icon ui-corner-none">Homes for sale</a></li>
+      				<li><a href="#" onclick="home_page('Homes for Rent')"><img  src="images/home.png" alt="" class="ui-li-icon">Homes for rent</a></li>
+      				<li><a href="#" onclick="home_page('Rooms for Rent')"><img src="images/room_rent.png" alt="" class="ui-li-icon">Rooms for rent</a></li>
+      				<li><a href="#" onclick="home_page('Land for Sale')"><img src="images/sales_icon.png" alt="" class="ui-li-icon">Land for Sale</a></li>
+      				<li><a href="#" onclick="home_page('Commercial Property')"><img src="images/commercial_icon.png" alt="" class="ui-li-icon">Commercial Property</a></li>
+					 <li><a href="#" onclick="home_page('Commercial Property for Lease')"><img src="http://devbox.com/realestateapp/imageshome.png" alt="Home" class="ui-li-icon ui-corner-none">Commercial Property for Lease</a></li>
+    			</ul>
+  			</div>-->
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search nav-search1" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a>
+    			</div>
+  			</div>
+		</div>
+		<script type="text/javascript">
+			$(document).on('pageinit', '#home_page', function(){ 
+				var id = '#dialog';
+				if(!sessionStorage.firstTimeLoad){
+				//Get the screen height and width
+				var maskHeight = $(document).height();
+				var maskWidth = $(window).width();
+			
+				//Set heigth and width to mask to fill up the whole screen
+				$('#mask').css({'width':maskWidth,'height':maskHeight});
+				
+				//transition effect		
+				$('#mask').fadeIn(1000);	
+				$('#mask').fadeTo("slow",0.8);	
+			
+				//Get the window height and width
+				var winH = $(window).height();
+				var winW = $(window).width();
+		              
+				//Set the popup window to center
+				$(id).css('top',  winH/2-$(id).height()/2);
+				$(id).css('left', winW/2-$(id).width()/2);
+			
+				//transition effect
+				$(id).fadeIn(2000); 	
+			
+			//if close button is clicked
+			$('.window .close').click(function (e) {
+				//Cancel the link behavior
+				e.preventDefault();
+				
+				$('#mask').hide();
+				$('.window').hide();
+			});		
+			
+			//if mask is clicked
+			$('#mask').click(function () {
+				$(this).hide();
+				$('.window').hide();
+			});	
+				}
+			});
+			$( '#home_page' ).off('pageshow').on( 'pageshow',function() {
+				side_link('nav-search1');
+				sessionStorage.firstTimeLoad = "Yes";
+			});
+		
+			function home_page(dat){
+				//$(".keywords").html('');
+				$("#srch_tags").html('');
+			//$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				sessionStorage.urlpropertyType = dat;
+				sessionStorage.propertyType ="";
+				sessionStorage.listingType = "";
+				sessionStorage.noBedroom = "";
+				sessionStorage.noBathroom = "";
+				sessionStorage.priceFrom = "";
+				sessionStorage.priceTo = "";
+				sessionStorage.location = "";
+				sessionStorage.sizeFrom = "";
+				sessionStorage.sizeTo = "";
+				sessionStorage.keyword = "";
+				sessionStorage.keywordname ="";
+				
+				var srch_cond ='';
+				
+				
+				var srch_cond2 ='';
+				if(dat){
+				if(dat=='Residences for Sale'){
+					srch_cond2 = "<span> Property Type  - Residential Home, Residential Unfinished Structure, Apartment/Condo, Townhouse, Villa, Guest House | Listing Type - Sale</span>";
+
+				}
+				else if(dat=='Long term rental'){
+					srch_cond2 = "<span> Property Type - Residential Home,Hotel, Apartment/Condo, Townhouse, Villa, Guest House, Timeshare | Listing Type - Sale, Rent, Lease</span>";
+					
+				}
+				else if(dat=='Short term rental'){
+					srch_cond2 = "<span> Property Type  - Room in Private Residence, Hotel, Apartment/Condo, Townhouse, Villa, Guest House, Timeshare | Listing Type -Sale, Rent</span> ";
+
+				}
+				else if(dat=='Commercial Property'){
+					srch_cond2 = "<span> Property Type - Commercial Property, Commercial Land, Commercial Unfinished Structure, Office, Shop, Warehouse, Restaurant, Apartment Block, Other | Listing Type -Sale, Rent, Lease</span>";
+
+				}
+				else if(dat=='Residential Land'){
+					srch_cond2 ="<span> Property Type  - Residential Land, Commercial Land | Listing Type -Sale, Rent, Lease";
+						
+
+				}
+					if(srch_cond2)	{
+						srch_cond3=srch_cond2.replace(/(\s+)?.$/, '');
+						$("#srch_tags").append(srch_cond3);
+					}
+					else{ 
+						$(".keywords").hide();
+					}
+				}
+				else{
+				if(sessionStorage.propertyType)
+					srch_cond = "<span>Property Type - "+sessionStorage.propertyType+"</span> | ";
+				if(sessionStorage.listingType)
+					srch_cond += "<span>Listing Type - "+sessionStorage.listingType+"</span> | ";
+				if(sessionStorage.noBedroom != "" && sessionStorage.noBedroom != null)
+					srch_cond += "<span>Bed - "+sessionStorage.noBedroom+"</span> | ";
+				if(sessionStorage.noBathroom)
+					srch_cond += "<span> Bath - "+sessionStorage.noBathroom+"</span> | ";
+				if(sessionStorage.priceFrom != "" && sessionStorage.priceFrom != null && sessionStorage.priceFrom != 0)
+					srch_cond += "<span>Min Price - $"+sessionStorage.priceFrom+"</span> | ";
+				if(sessionStorage.priceTo && sessionStorage.priceTo != 0)
+					srch_cond += "<span>Max Price - $"+sessionStorage.priceTo+"</span> | ";
+				if(sessionStorage.sizeFrom && sessionStorage.sizeFrom != 0)
+					srch_cond += "<span>Min Size - "+sessionStorage.sizeFrom+" Sq.ft</span> | ";
+				if(sessionStorage.sizeTo && sessionStorage.sizeTo != 0 )
+					srch_cond += "<span>Max Size - "+sessionStorage.sizeTo+" Sq.ft</span> | ";
+				if(sessionStorage.location && sessionStorage.location != 0){
+					var loca = $( "#location option[value='"+sessionStorage.location+"']" ).text();
+					srch_cond += "<span>Location - "+loca+"</span> | ";
+				}
+				if(sessionStorage.keyword)
+					srch_cond += "<span> Keyword - "+sessionStorage.keyword+"</span> | ";
+				if(sessionStorage.keywordname)
+					srch_cond += "<span> Keyword_name - "+sessionStorage.keywordname+"</span> | ";
+					
+					
+				if(srch_cond)	
+					$("#srch_tags").append(srch_cond);
+				else 
+              		$("#srch_tags").html('<span>Property Type- All Property Types </span>| <span>Listing Type- All Listing Types </span>|<span> Location- All Locations </span>');
+
+				}
+				sessionStorage.page = '1';
+				sessionStorage.sizelist = "Listing.created DESC";
+                $.mobile.changePage('#property_list', { transition: "slideup",forward: true,allowSamePageTransition : true , showLoadMsg : true} );
+                			}
+	 	</script>
+		<div data-role="page" id="sign_up">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Realty On The Go</h1>
+  			</div>
+  			<div data-role="content">
+    			<div class="txtC logo_box"><img src="images/logo.png" class="logo"></div>
+    			<h4 class="txtC"></h4>
+   				<div class="bg_form_box rds5_box">
+    				<form action="" class="form_layout signup_form" id = "signup">
+      					<div data-role="fieldcontain">
+        					<input name="fname" id="sign_fname" placeholder="Firstname" value="" type="text" maxlength="25">
+        					<div class="valid_text" id="invalid-sign_fname"></div>
+      					</div>
+      					<!--<div data-role="fieldcontain">
+        					<input name="lname" id="sign_lname" placeholder="Lastname" value="" type="text" maxlength="25">
+        					<div class="valid_text" id="invalid-sign_lname"></div>
+     	 				</div>-->
+						<div data-role="fieldcontain">
+							<input name="email_address" id="sign_email_address" placeholder="Email Address" value="" type="text" maxlength="50">
+							<div class="valid_text" id="invalid-sign_email_address"></div>
+						</div>
+      					<div data-role="fieldcontain">
+        					<input name="password" id="sign_password" placeholder="Password" value="" type="password" maxlength="25">
+        					<div class="valid_text" id="invalid-sign_password"></div>
+      					</div>
+      					<div data-role="fieldcontain">
+        					<input name="cpassword" id="sign_cpassword" placeholder="Confirm Password" value="" type="password" maxlength="25">
+        					<div class="valid_text" id="invalid-sign_cpassword"></div>
+      					</div>
+                        <div data-role="fieldcontain">
+        					<input name="telephone" id="sign_telephone" placeholder="Telephone Number" value="" type="text" >
+        					<div class="valid_text" id="invalid-sign_telephone"></div>
+     	 				</div>
+      					<div class="txtC signup_btn_box .ui-btn"> <a data-role="button" data-theme="b" href="#page1" class="" id ="signup_btn"> Register</a> </div>
+      					<div class="txtC mrT20"><a id = "back_login" href="#">Back to Login</a></div>
+    				</form>
+    			</div>
+  			</div>
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a>
+    			</div>
+  			</div>
+		</div>
+		<script type="text/javascript">
+			$( '#sign_up' ).off('pageshow').on( 'pageshow',function() {
+				side_link();
+			});
+			$( "#sign_up" ).on( "pagehide", function( event, ui ) {
+				$( "#sign_fname" ).val('');
+				//$( "#sign_lname" ).val('');
+				$( "#sign_email_address" ).val('');
+				$( "#sign_password" ).val('');
+				$( "#sign_cpassword" ).val('');
+                $( "#sign_telephone" ).val('');
+			});	
+			$('#back_login').off('click').on('click',function(){
+				$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+		 	});
+			function mobile_signup(){
+			$.mobile.loading( 'show');
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				var myKeyVals = {'name' : $( "#sign_fname" ).val(), 'email_address' : $( "#sign_email_address" ).val(), 'password' : $( "#sign_password" ).val(),'telephone' : $( "#sign_telephone" ).val(), 'mode' : 'Signup'};
+				$.ajax({
+				
+		    		type: 'POST',
+		        	url: url,
+		        	async: false,
+		        	data: myKeyVals,
+		        	dataType: 'json',
+		        	success: function(data) {
+			        	if(data != ""){
+			        	$.mobile.loading( 'hide');
+			        		setTimeout(function(){
+			        			pop('home-overlay','success_popup','Your account has been registered succesfully.');
+			        		},1500);
+			        		$.mobile.changePage('#home_page', { transition: "slideup",forward: true} );
+		        		}
+		        	}	
+		    	});
+				//hide loading message.
+				/*setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);*/
+				//sessionStorage.keyword = $("#keyword").val();
+				//$.mobile.changePage('#property_list', { transition: "slideup",forward: true} );
+			}
+		</script>
+		<div data-role="page" id="login">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Realty On The Go</h1>
+  			</div>
+		  	<div data-role="content">
+		    	<div class="txtC logo_box"><img src="images/logo.png" class="logo"></div>
+		    	<div id="login-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+  					<p id="login-overlay_msg"></p>
+				</div>
+		    	<div class="bg_form_box rds5_box">
+		    		<form action="" class="form_layout login_form" id="login_contents">
+		      			<div data-role="fieldcontain">
+		        			<input name="email_address" id="email_address" placeholder="Email Address" value="" type="text" maxlength="50">
+		        			<div class="valid_text" id="invalid-email_address"></div>
+		      			</div>
+				      	<div data-role="fieldcontain">
+				        	<input name="password" id="password" placeholder="Password" value="" type="password" maxlength="25">
+				      		<div class="valid_text" id="invalid-password"></div>
+				      	</div>
+		      			<div class="txtC login_btn_box"> <input type="button" data-theme="b" href="#login" value="Login" class="" id="login_btn"> </div>
+		      			<div class="txtC mrT20"><a id = "forgot" href="#">Forgot Password?</a></div>
+		      			<div class="txtC mrT20"><a id = "tosignup" href="#">Register</a></div>
+		    		</form>
+		    	</div>
+		  	</div>
+		  	<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a>
+    			</div>
+  			</div>
+		</div>
+		<script type="text/javascript">
+			$( '#login' ).off('pageshow').on( 'pageshow',function() {
+				side_link();
+			});
+			$( "#login" ).on( "pagehide", function( event, ui ) {
+				$( "#email_address" ).val('');
+				$( "#password" ).val('');
+			});	
+			$('#forgot').off('click').on('click',function(){
+				$.mobile.changePage('#forgot_password', { transition: "slideup",forward: true} );
+		 	});
+			$('#tosignup').off('click').on('click',function(){
+				$.mobile.changePage('#sign_up', { transition: "slideup",forward: true} );
+		 	})
+			function mobile_login(){
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				var myKeyVals = { 'email_address' : $( "#email_address" ).val(), 'password' : $( "#password" ).val(), 'mode' : 'Login'};
+				$.ajax({
+		    		type: 'POST',
+		        	url: url,
+		        	async: false,
+		        	data: myKeyVals,
+		        	dataType: 'json',
+		        	success: function(data) {
+			  			if(data != ""){
+				        	sessionStorage.USERID = data.User['id'];
+				        	sessionStorage.USERNAME = data.User['name'];
+				        	sessionStorage.NOTIFICATION_COUNT = data.User['notification_count'];
+				        	$.mobile.changePage('#home_page', { transition: "slideup",forward: true} );
+			        	}else{
+			        		pop('login-overlay','error_popup','Invalid Username or Password');
+						}
+		        	}	
+		    	});
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+									},1000);
+				//sessionStorage.keyword = $("#keyword").val();
+				//$.mobile.changePage('#property_list', { transition: "slideup",forward: true} );
+			}
+		</script>
+		<div data-role="page" id="forgot_password">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Realty On The Go</h1>
+  			</div>
+			<div data-role="content">
+				<div id="forgot-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+  					<p id="forgot-overlay_msg"></p>
+				</div>
+		    	<div class="txtC logo_box"><img src="images/logo.png" class="logo"></div>
+		    	<h4 class="txtC">Forgot Password</h4>
+		    	<div class="bg_form_box rds5_box">
+		    		<form action="" class="form_layout forgot_form" id="forgot_pswd">
+		      			<div data-role="fieldcontain">
+		        			<input name="emailaddress" id="forgot_email_address" placeholder="Email Address" value="" type="text" maxlength="50">
+		        			<div class="valid_text" id="invalid-forgot_email_address"></div>
+		   				</div>
+		      			<div class="txtC reset_btn_box"> <a data-role="button" data-theme="b" href="#forgot_password"id="forgot_sub_btn" class="">Submit</a> </div>
+		      			<div class="txtC mrT20"><a id ="to_login_btn" href="#">Back to Login</a></div>
+		    		</form>
+		    	</div>
+		  	</div>
+		  	<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a>
+    			</div>
+  			</div>
+		</div>
+		<script>
+			$( '#forgot_password' ).off('pageshow').on( 'pageshow',function() {
+				side_link();
+			});
+			
+			$('#to_login_btn').off('click').on('click',function(){
+				$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+			});
+			function mobile_forgot(){
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				var myKeyVals = { 'email_address' : $( "#forgot_email_address" ).val(), 'mode' : 'ForgotPassword'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			        if(data != ""){
+			        		 setTimeout(function(){
+			        		 	pop('forgot-overlay','success_popup','Your account details are mailed to the email address provided.');
+			        		 },1000);
+			        	}else{
+			        		setTimeout(function(){
+			        			pop('forgot-overlay','error_popup',"Email address provided doesn't match to the records. Please try again!");
+			        		},1000);
+				        	}
+			        }	
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+					$( "#forgot_email_address" ).val('');
+				},1000);
+				//sessionStorage.keyword = $("#keyword").val();
+				//$.mobile.changePage('#property_list', { transition: "slideup",forward: true} );
+			}
+		</script>
+		<div data-role="page" class="ui-responsive-panel" id="myaccount_page">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Realty On The Go</h1>
+			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+	  			<div id="my-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+					<p id="my-overlay_msg"></p>
+				</div>
+				<h4 class="txtC">My Account</h4>
+				<div class="bg_form_box rds5_box">
+					<form action="" class="form_layout myaccount_form" id="myaccount_form">
+						<div data-role="fieldcontain">
+							<input name="fname" id="my_firstname" placeholder="Firstname" value="" type="text" maxlength="25">
+							<div class="valid_text" id="invalid-my_firstname"></div>
+						</div>
+					<!--<div data-role="fieldcontain">
+							<input name="lname" id="my_lastname" placeholder="Lastname" value="" type="text" maxlength="25">
+							<div class="valid_text" id="invalid-my_lastname"></div>
+						</div>-->
+						<div data-role="fieldcontain">
+							<input name="email_address" id="my_emailaddress" placeholder="Email Address" value="" type="text" maxlength="40">
+							<div class="valid_text" id="invalid-my_emailaddress"></div>
+						</div>
+                        <div data-role="fieldcontain">
+							<input name="telephone" id="my_telephone" placeholder="Telephone Number" value="" type="text" >
+							<div class="valid_text" id="invalid-my_telephone"></div>
+						</div>
+						<div data-role="fieldcontain">
+							<input name="old_password" id="my_oldpassword" placeholder="Old Password" value="" type="password" maxlength="25">
+							<div class="valid_text" id="invalid-my_oldpassword"></div>
+						</div>
+						<input name="id" id="my_user_id" value="" type="hidden"/>
+						<div data-role="fieldcontain">
+							<input name="password1" id="my_newpassword" placeholder="New Password" value="" type="password" maxlength="25">
+							<div class="valid_text" id="invalid-my_newpassword"></div>
+						</div>
+						<div data-role="fieldcontain">
+							<input name="password2" id="my_confirmpassword" placeholder="Confirm Password" value="" type="password" maxlength="25">
+							<div class="valid_text" id="invalid-my_confirmpassword"></div>
+						</div>
+						<div class="txtC update_btn_box">
+							<a data-role="button" data-theme="b" href="#myaccount_page" class="" id="myccount_btn">Update</a>
+						</div>
+	        		</form>
+				</div>
+			</div>
+			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a>
+    			</div>
+  			</div>
+		</div>
+  		<script type="text/javascript">
+  			$( '#myaccount_page' ).off('pageshow').on( 'pageshow',function() {
+  				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+  					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+  				}
+  				side_link();
+  				$( '#my_user_id' ).val(sessionStorage.USERID);
+  				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+  				var myKeyVals = { 'user_id' : sessionStorage.USERID, 'mode' : 'UserDetail'};
+  				$.ajax({
+  			    	type: 'POST',
+  			        url: url,
+  			        async: false,
+  			        data: myKeyVals,
+  			        dataType: 'json',
+  			        success: function(data) {
+						if(data != ""){
+  			        		$( '#my_firstname' ).val(data.User.name);
+  			        		//$( '#my_lastname' ).val(data.User.last_name);
+  			        		$( '#my_emailaddress' ).val(data.User.email_address);
+                            $( '#my_telephone' ).val(data.User.telephone);
+  			        		
+  			        	}
+  			        }	
+  			    });
+  				//hide loading message.
+  				setTimeout(function(){
+  					$.mobile.loading( 'hide');
+  				},1000);
+  			});
+
+  			function myccount_update(){
+  				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+  				var myKeyVals = { 'user_id' : sessionStorage.USERID, 'name' : $( "#my_firstname" ).val(),'email_address' : $( "#my_emailaddress" ).val(),'telephone' : $( "#my_telephone" ).val(), 'password' : $( "#my_confirmpassword" ).val(), 'mode' : 'MyAccount'};
+  				$.ajax({
+  			    	type: 'POST',
+  			        url: url,
+  			        async: false,
+  			        data: myKeyVals,
+  			        dataType: 'json',
+  			        success: function(data) {
+						if(data != ""){
+							setTimeout(function(){
+								pop('my-overlay','success_popup','Account detail has been updated successfully');
+					       },1100);
+  			        	}
+  			        }	
+  			    });
+  				//hide loading message.
+  				setTimeout(function(){
+  					$.mobile.loading( 'hide');
+  				},1000);
+  				
+  			}
+		</script>
+		<div data-role="page" class="ui-responsive-panel" id="property_search">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Property Search</h1>
+  			</div>
+  			<div data-role="content" class="">
+  				<div id="search-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+  					<p id="search-overlay_msg"></p>
+				</div>
+    			<form class="form_layout property_search_form">
+      				<ul id="search_listview" data-role="listview" data-inset="true">
+      				<li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+		          					<select name="select-listing_type" id="select-listing_type"  data-native-menu="false" onchange="change_propertytype();">
+				            			<option value="">Listing Type</option>
+				            			<option value="Sale">For Sale </option>
+		            					<option value="Rent">For Rent</option>
+		            					<option value="Lease">For Lease</option>
+		            					</select>
+				          		</div>
+				          	</div>		
+        				</li>
+        			<li data-role="fieldcontain" id="lselect-property-type_sale">
+          					<div class="input_group">
+            					<div class="input_sec">
+		          					<select name="select-property-type_sale" id="select-property-type" data-native-menu="false">
+				            			<option value="">Property Type</option>
+				            			<option value="any">All Property Types</option>
+				            			<option value="Apartment/Condo">Apartment/Condo</option>
+				            			<option value="Apartment Block">Apartment Block</option>
+		            					<option value="Commercial Land">Commercial Land</option>
+		            					<option value="Commercial Property">Commercial Property</option>
+		           						<option value="Commercial Unfinished Structure">Commercial Unfinished Structure</option>
+		            					<option value="Guest House">Guest House</option>
+		            					<option value="Hotel">Hotel</option>
+		            					<option value="Office">Office</option>
+		            					<option value="Shop">Shop</option>
+		            					<option value="Residential Home">Residential Home</option>
+		            					<option value="Residential Land">Residential Land</option>
+		            					<option value="Residential Unfinished Structure">Residential Unfinished Structure</option>
+		            					<option value="Restaurant">Restaurant</option>
+		            					<option value="Room in Private Residence">Room in Private Residence</option>
+		            					<option value="Timeshare">Timeshare</option>
+		            					<option value="Townhouse">Townhouse</option>
+		            					<option value="Villa">Villa</option>
+		            					<option value="Warehouse">Warehouse</option>
+		            					<option value="Other">Other</option>
+				          			</select>
+				          		</div>
+				          	</div>		
+        				</li>        				
+        				<li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec half_sec">
+		          					<select name="select-no-bedrooms" id="select-no-bedrooms" data-native-menu="false">
+		            					<option value="">Bed</option>
+		            					<option value="any">All</option>
+		            					<option value="1">1</option>
+		            					<option value="2">2</option>
+		            					<option value="3">3</option>
+		            					<option value="4">4</option>
+		            					<option value="5+">5+</option>
+		          					</select>
+		          				</div>
+            					<div class="input_sec half_sec">
+		          					<select name="select-no-bathrooms" id="select-no-bathrooms" data-native-menu="false">
+		            					<option value="">Bath</option>
+		            					<option value="any">All</option>
+		            					<option value="1">1</option>
+		            					<option value="2">2</option>
+		            					<option value="3">3</option>
+		            					<option value="4">4</option>
+		            					<option value="5+">5+</option>
+		          					</select>
+		          				</div>
+		          			</div>
+        				</li>
+        				<li data-role="fieldcontain">
+        					<label for="text-basic">Price Range:</label>
+				          	<div class="input_group">
+				            	<div class="input_sec half_sec">
+				              		<input name="text-basic" id="range-1a" value="" type="text" class="numbers" placeholder="Min" maxlength="15">
+				           	 	</div>
+				            	<div class="input_sec half_sec">
+				              		<input name="text-basic" id="range-1b" value="" type="text" class="numbers" placeholder="Max" maxlength="15">
+				            	</div>
+				 			</div>
+        				</li>
+        				<li data-role="fieldcontain">
+        					<label for="text-basic">Square Feet Range:</label>
+				          	<div class="input_group">
+				            	<div class="input_sec half_sec">
+				              		<input name="text-basic" id="sizefrom" value="" type="text" class="numbers" placeholder="Min" maxlength="15">
+				           	 	</div>
+				            	<div class="input_sec half_sec">
+				              		<input name="text-basic" id="sizeto" value="" type="text" class="numbers" placeholder="Max" maxlength="15">
+				            	</div>
+				 			</div>
+        				</li>
+        				<li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+		          					<select name="select-choice-a" id="location" data-native-menu="false">
+		            					<option value="">Location</option>
+		            					<option value="any">All Locations</option>
+							            <option value="1">Christ Church</option>
+							            <option value="2">St. Andrew</option>
+							            <option value="3">St. George</option>
+							            <option value="4">St. James</option>
+							            <option value="5">St. John</option>
+							            <option value="6">St. Joseph</option>
+							            <option value="7">St. Lucy</option>
+							            <option value="8">St. Michael</option>
+							            <option value="9">St. Peter</option>
+							            <option value="10">St. Philip</option>
+							            <option value="11">St. Thomas</option>
+							            
+		          					</select>
+		          				</div>
+		          			</div>
+        				</li>
+				        <li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+				          			<input name="text-basic" id="keyword" value="" type="text" placeholder="KEYWORD / LISTING ID ">
+		          				</div>
+		          			</div>
+				        </li>
+				         <li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+				          			<input name="text-basic" id="keyword_name" value="" type="text" placeholder="AGENT / VENDOR ">
+		          				</div>
+		          			</div>
+				        </li>
+				       <!--<li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+		          					<select name="select-choice-name" id="keyword_name" data-native-menu="false">
+		            					<option value="">Advertiser Name</option>
+		            				</select>
+		          				</div>
+		          			</div>
+        				</li>-->
+        				
+				        <li data-role="fieldcontain" class="search_btn_box">
+          					<div class="input_group">
+            					<div class="input_sec">
+				          			<input value="Search" id="search-btn-submit" data-theme="b" type="button" class="">
+		          				</div>
+		          			</div>
+				        </li>
+				        <li data-role="fieldcontain">
+          					<div class="input_group">
+            					<div class="input_sec">
+				          			<div class="txtC"> <a href="" id= "open_save_search"data-rel="popup" data-position-to="window" data-role="button" data-inline="true" data-transition="pop" data-theme="b" class="mr0">Save Search</a> </div>
+		          				</div>
+		          			</div>
+				        </li>
+      				</ul>
+    			</form>
+  			</div>
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+			    <div class="prft_box btn_box">
+			    	<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  			<div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="c" data-dismissible="false" style="max-width:400px;" class="ui-corner-all">
+    			<div data-role="header" data-theme="a" class="ui-corner-top">
+      				<h1>Save Search</h1>
+    			</div>
+	    		<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+	      			<p>Please enter a name to save your search preference</p>
+	      			<form id= "search_name_form">
+	      				<input name="text-basic" name ="search_name" id="save_search_name" value="" type="text" placeholder="" maxlength="25">
+	      				<input name ="user_id" id="lusid" type="hidden">
+	      				<div class="valid_text" id="invalid-save_search_name"></div>
+	      			</form>
+	      			<div style="text-align:center"> 
+	      			<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Cancel</a>
+	      			<a href="#" id="search_name_btn" data-role="button" data-inline="true"  data-transition="flow" data-theme="b">Continue</a> </div>
+	    		</div>
+	    		</div>
+  			</div>
+		</div>
+		
+        				
+		<script type="text/javascript">
+			
+        				
+        				
+			$('.numbers').keypress(function(ev) {
+		   	 	var keyCode = window.event ? ev.keyCode : ev.which;
+		    	//codes for 0-9
+		    	if (keyCode < 48 || keyCode > 57) {
+		        	//codes for backspace, delete, enter
+		        	if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+		            	ev.preventDefault();
+		        	}
+		    	}
+			});
+			function change_propertytype(){
+			//alert("rrrrr");
+     var mitems=new Array();
+        mitems['Sale']=['Apartment/Condo','Apartment Block','Commercial Land','Commercial Property','Commercial Unfinished Structure','Guest House','Hotel','Office','Shop','Residential Home','Residential Land','Residential Unfinished Structure','Restaurant','Room in Private Residence','Timeshare','Townhouse','Villa','Warehouse','Other'];
+        mitems['Rent']=['Apartment/Condo','Guest House','Hotel','Residential Home','Residential Land','Residential Unfinished Structure','Room in Private Residence','Timeshare','Townhouse','Villa'];
+        mitems['Lease']=['Apartment Block','Commercial Land','Commercial Property','Commercial Unfinished Structure','Office','Shop','Restaurant','Warehouse','Other'];
+        cur=mitems[$("#select-listing_type").val()];
+        $("#select-property-type :gt(1)").remove();
+        
+        			for(var i=0;i<cur.length;i++)
+           				 {
+                			$("#select-property-type").append($("<option></option>").attr("value",cur[i]).text(cur[i]));
+           				 }
+        			$('#select-property-type').selectmenu('refresh');
+    			}
+    $( '#property_search' ).off('pageshow').on( 'pageshow',function() {
+				side_link();
+				$('#lusid').val(sessionStorage.USERID);
+				/*if($("#keyword_name :gt(0)")){
+				var myKeyVals = {  'mode' : 'advertisername'};
+				$.ajax({
+					type: 'POST',
+					url: url,
+					async: false,
+					data: myKeyVals,
+					dataType: 'json',
+					success: function(data) {
+						$('#keyword_name').empty();
+						if(data){
+							$.each(data,function(i,item){
+              				  $("#keyword_name").append($("<option></option>").attr("value",i).text(i));
+							});
+						} 
+					       			 $('#keyword_name').selectmenu('refresh');
+						
+            }
+						
+				});
+				
+				//hide loading message.
+				setTimeout(function(){
+				$.mobile.loading( 'hide');
+				},1000);
+				}*/
+				
+				
+				
+			});
+			$( "#property_search" ).on( "pagehide", function( event, ui ) {
+			//alert("hiding");
+			/*$("#select-property-type").val('').change();
+				$("#select-no-bedrooms").val('').change();
+				$("#select-no-bathrooms").val('').change();
+				$("#range-1a").val('');
+				$("#range-1b").val('');
+				$("#location").val('').change();
+				$("#sizefrom").val('');
+				$("#sizeto").val('');
+				$("#keyword").val('');*/
+			sessionStorage.urlpropertyType = "";
+				
+				});
+			
+			function save_searching(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+			
+				var myKeyVals = { 'search_name' : $("#save_search_name").val(),'user_id' : sessionStorage.USERID,'property_type' : $("#select-property-type").val(),'listing_type' : $("#select-listing_type").val(), 'no_of_bedrooms' : $("#select-no-bedrooms").val(), 'no_of_bathrooms' : $("#select-no-bathrooms").val(), 'min_price' : $("#range-1a").val(), 'max_price' : $("#range-1b").val(), 'min_size' : $("#sizefrom").val(), 'max_size' : $("#sizeto").val(), 'state_id' : $("#location").val(), 'keyword' : $("#keyword").val(),'keyword_name' : $("#keyword_name").val(), 'mode' : 'SaveSearch'};
+					$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			       // alert(property_type);
+			        //alert(listing_type);
+			       			setTimeout(function(){
+			        		pop('search-overlay','success_popup','Your search has been saved successfully');
+			        		 
+						},1000);
+					}
+					
+			    });
+			    
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+					
+				},1000);
+				
+			}
+		$('#open_save_search').off('click').on('click',function(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}else{
+				 if( $("#select-property-type").val() != "" || $("#select-listing_type").val() != "" || $("#select-no-bedrooms").val() != "" || $("#select-no-bathrooms").val() != "" || $("#range-1a").val() != "" || $("#range-1b").val() != "" || $("#sizefrom").val() != ""||$("#sizeto").val() != ""||$("#location").val() != ""|| $("#keyword").val() != "" || $("#keyword_name").val() != ""){
+						
+						$("#save_search_name").val("");
+						$("#invalid-save_search_name").html("");
+						$( "#popupDialog" ).popup('open');
+						
+				}
+						
+			 else{
+			 setTimeout(function(){
+			       pop('search-overlay','success_popup','You need to select any one value to save');
+						},100);
+					}
+				}
+				
+			});
+		$('#search-btn-submit').off('click').on('click',function(){
+			
+				 // set the event type in session variable
+				sessionStorage.listingType = $("#select-listing_type").val();
+				sessionStorage.propertyType = $("#select-property-type").val();
+				sessionStorage.noBedroom = $("#select-no-bedrooms").val();
+				sessionStorage.noBathroom = $("#select-no-bathrooms").val();
+				sessionStorage.priceFrom = $("#range-1a").val();
+				sessionStorage.priceTo = $("#range-1b").val();
+				sessionStorage.location = $("#location").val();
+				sessionStorage.sizeFrom = $("#sizefrom").val();
+				sessionStorage.sizeTo = $("#sizeto").val();
+				sessionStorage.keyword = $("#keyword").val();
+				sessionStorage.keywordname = $("#keyword_name").val();
+				sessionStorage.page = '1';
+				sessionStorage.sizelist = "Listing.created DESC";
+				console.log(sessionStorage);
+				$.mobile.changePage('#property_list', { transition: "slideup",forward: true} );
+				
+			});
+	
+		
+		
+			
+		</script>
+		<div data-role="page" class="jqm-demos ui-responsive-panel" id="property_list">
+  			<div data-role="header" data-theme="a" data-position="fixed"> 
+  			  			<a  href="#nav-panel"  data-iconpos="notext" data-icon="bars" data-theme="a">Menu</a>
+  			  			<h1 id ="listTiltle"></h1>
+  			  		
+  			  			
+  			  			
+  			  			<!--  <a  id='back_btn2' data-role="button"  class="ui-btn-left" data-iconpos="" style="width: 63px; position:absolute;" data-icon="back" data-theme="a">Back</a>	-->
+				<div class="sort_by">
+			 		<select name="select-sort" id="select-sort" data-iconpos="left" data-native-menu="false">
+			        	<option value="Listing.created DESC ">Sort</option>
+			        	<option value="Listing.price ASC">Price (Low to High)</option>
+				        <option value="Listing.price DESC">Price (High to Low)</option>
+				        <option value="(0 + Listing.size) ASC">Square Feet (Low to High)</option>
+				        <option value="(0 + Listing.size) DESC">Square Feet (High to Low)</option>
+				        <option value="Listing.no_of_bedrooms ASC">Bed(Low to High)</option>
+				        <option value="Listing.no_of_bedrooms DESC">Bed(High to Low)</option>
+				        <option value="Listing.no_of_bathrooms ASC">Bath(Low to High)</option>
+				        <option value="Listing.no_of_bathrooms DESC">Bath (High to Low)</option>
+			      	</select>
+			      	<!-- <div class="back_btn">
+    				<a href="#" onclick="javascript:window.history.back(-1);return false;">Back</a>
+   				 </div> -->
+    			</div>
+  			</div>
+  			<!-- /header -->
+  			
+  			<div data-role="content" class="property_list" id="results_div">
+    			
+    			<p id="List_pag_count" style="font-size: 11px;">Displaying  0 - 0 of 0 Results</p>
+    			<p class="pull-left" style="padding:10px 20px 0px 0px;color:red;font-size: 11px; float:right;
+    margin-top: -35px;">Prices in BDS$</p>
+    			<div class="keywords">
+			  		<div class="row">
+			 	 	<p id="srch_tags"></p>
+			 	 </div><!-- /row -->
+			  </div><!-- /keywords -->
+
+    			<ul data-role="listview" id="property_listview" data-inset="true" class="thumb_list">
+    			</ul>
+    			<div id="map_view" style="display:none">
+        			<div style="height: 312px;"id="list_map" ></div>
+        		</div>					
+				<div class="paginate pagination_box" id="paging_button">
+			    </div>
+  			</div>
+  			<!-- /content -->
+  			<div data-role="footer" data-position="fixed" class="ui-bar footer action_group">
+  				<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+			        <a class="side_myfavorite" href="#" data-role="button" data-iconpos="" data-icon="star" data-theme="a">Favourites</a>
+			        <a href="#" class= "switch_map_list" data-role="button" data-iconpos="" data-icon="edit" data-theme="a">Map</a>
+			        <a class="side_propety_search" href="#" data-role="button" data-iconpos="" data-icon="search" data-theme="a">Search</a>
+			        <a class ="side_mynotification" href="#" data-role="button" data-iconpos="" data-icon="info" data-theme="a">Notification</a>
+    			</div>
+  			</div>
+  			<!-- /footer -->
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  			<!-- /panel -->
+		</div>
+		<script type="text/javascript">
+			var map1 = new google.maps.Map(document.getElementById("list_map"), mapOptions);
+			//google.maps.event.trigger(map1, "resize");	
+
+			var map_address =[]; var mapcontent = [];
+			
+			$('.switch_map_list').off('click').on('click',function(){
+				if(map_switcher == "map"){
+					$('.switch_map_list').addClass('switch_list_map');
+				  	$('#paging_button').hide();
+				  	$('.switch_map_list').removeClass('switch_map_list');
+				  	$('.hide_list').hide();
+				  	$('#map_view').show();
+				  	google.maps.event.trigger(map1, 'resize');
+				  	map_switcher ="list";
+				  }else{
+					$('.switch_list_map').addClass('switch_map_list');
+					$('#paging_button').show();
+					$('.switch_list_map').removeClass('switch_list_map');
+					$('.hide_list').show();
+					$('#map_view').hide();
+					map_switcher = "map";
+				 }	  
+			});
+			
+			$( "#property_list" ).on( "pagehide", function( event, ui ) {
+				$('.switch_list_map').addClass('switch_map_list');
+				sessionStorage.saved_search_name= "";
+				//$('.switch_list_map').html('map');
+				$('.switch_list_map').removeClass('switch_list_map');
+				$('.hide_list').show();
+				$('#map_view').hide();
+				$('#property_listview').empty();
+				
+			});
+			  
+			$( '#property_list' ).off('pageshow').on( 'pageshow',function() {
+			
+				$('#property_listview').empty();
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+		
+				var list_title1 ="Property Search";
+				$('#select-sort').val("");
+				//$('#select-sort').val(sessionStorage.sizelist).change();
+				if( typeof sessionStorage.urlpropertyType !="undefined" && sessionStorage.urlpropertyType !=""){
+					list_title1 = sessionStorage.urlpropertyType;
+					}
+					
+				if( typeof sessionStorage.propertyType !="undefined" && sessionStorage.propertyType !=""  && sessionStorage.listingType != "undefined" && sessionStorage.listingType != ""){
+					list_title1 = sessionStorage.propertyType+" "+"For "+ sessionStorage.listingType ;
+				}
+				if( typeof sessionStorage.saved_search_name !="undefined" && sessionStorage.saved_search_name !=""){
+					//$('#listTiltle').html("");
+					list_title1= sessionStorage.saved_search_name;
+					
+				 }
+				
+				$('#listTiltle').html(list_title1);
+				side_link();
+				load_list();
+			});
+			
+			function pagination(num){
+				sessionStorage.page = num;
+				load_list();
+			}
+			
+			$( "#select-sort" ).change(function() {
+				$('.switch_list_map').addClass('switch_map_list');
+				//$('.switch_list_map').html('map');
+				$('#paging_button').show();
+				$('.switch_list_map').removeClass('switch_list_map');
+				$('.hide_list').show();
+				$('#map_view').hide();
+				map_switcher = "map";
+				sessionStorage.sizelist = $( "#select-sort" ).val();
+				load_list();
+			});
+			
+			function load_list(){
+			
+				var myKeyVals = {'url_property_type' : sessionStorage.urlpropertyType,'property_type' : sessionStorage.propertyType,'listing_type' : sessionStorage.listingType,'no_of_bedrooms' : sessionStorage.noBedroom, 'no_of_bathrooms' : sessionStorage.noBathroom, 'price_from' : sessionStorage.priceFrom, 'price_to' : sessionStorage.priceTo, 'size_from' : sessionStorage.sizeFrom, 'size_to' : sessionStorage.sizeTo, 'state_id' : sessionStorage.location, 'keyword' : sessionStorage.keyword, 'keyword_name' : sessionStorage.keywordname, 'mode' : 'Propertylist','page' : sessionStorage.page , 'sort' : sessionStorage.sizelist};
+				var srch_cond = "";
+			
+				$(".keywords").show();
+				$("#srch_tags").html("");
+				
+				
+				var srch_cond2 ='';
+				if(sessionStorage.urlpropertyType){
+					if(sessionStorage.urlpropertyType=='Residences for Sale'){
+						srch_cond2 = "<span> Property Type  - Residential Home, Residential Unfinished Structure, Apartment/Condo, Townhouse, Villa, Guest House | Listing Type - Sale</span>";
+					}
+					else if(sessionStorage.urlpropertyType=='Long term rental'){
+						srch_cond2 = "<span> Property Type - Residential Home,Hotel, Apartment/Condo, Townhouse, Villa, Guest House, Timeshare | Listing Type - Sale, Rent, Lease</span>";
+					}
+					else if(sessionStorage.urlpropertyType=='Short term rental'){
+						srch_cond2 = "<span> Property Type  - Room in Private Residence, Hotel, Apartment/Condo, Townhouse, Villa, Guest House, Timeshare | Listing Type -Sale, Rent</span> ";
+					}
+					else if(sessionStorage.urlpropertyType=='Commercial Property'){
+						srch_cond2 ="<span> Property Type  - Commercial Property, Commercial Land, Commercial Unfinished Structure, Office, Shop, Warehouse, Restaurant, Apartment Block, Other | Listing Type -Sale, Lease</span>";
+					}
+					else if(sessionStorage.urlpropertyType=='Residential Land'){
+						srch_cond2 = "<span> Property Type  - Residential Land, Commercial Land | Listing Type -Sale, Rent, Lease";
+					} 
+					if(srch_cond2)	{
+						$("#srch_tags").append(srch_cond2);
+					}
+					else{ 
+						$(".keywords").hide();
+					}
+				}
+				else{	
+				
+				if(sessionStorage.propertyType)
+					srch_cond = "<span>Property Type - "+((sessionStorage.propertyType== 'any') ? 'All Property Types' : sessionStorage.propertyType )+"</span> | ";
+				
+				if(sessionStorage.listingType)
+					srch_cond += "<span>Listing Type - "+sessionStorage.listingType+"</span> | ";
+				if(sessionStorage.noBedroom != "" && sessionStorage.noBedroom != null)
+					srch_cond += "<span>Bed - "+((sessionStorage.noBedroom== 'any') ? 'All' : sessionStorage.noBedroom )+"</span> | ";
+				if(sessionStorage.noBathroom)
+					srch_cond += "<span> Bath - "+((sessionStorage.noBathroom== 'any') ? 'All' : sessionStorage.noBathroom )+"</span> | ";
+				if(sessionStorage.priceFrom != "" && sessionStorage.priceFrom != null && sessionStorage.priceFrom != 0)
+					srch_cond += "<span>Min Price - $"+sessionStorage.priceFrom+"</span> | ";
+				if(sessionStorage.priceTo && sessionStorage.priceTo != 0)
+					srch_cond += "<span>Max Price - $"+sessionStorage.priceTo+"</span> | ";
+				if(sessionStorage.sizeFrom && sessionStorage.sizeFrom != 0)
+					srch_cond += "<span>Min Size - "+sessionStorage.sizeFrom+" Sq.ft</span> | ";
+				if(sessionStorage.sizeTo && sessionStorage.sizeTo != 0 )
+					srch_cond += "<span>Max Size - "+sessionStorage.sizeTo+" Sq.ft</span> | ";
+				if(sessionStorage.location && sessionStorage.location != 0){
+					var loca = $( "#location option[value='"+sessionStorage.location+"']" ).text();
+					srch_cond += "<span>Location - "+loca+"</span> | ";
+				}
+				if(sessionStorage.keyword)
+					srch_cond += "<span> Keyword - "+sessionStorage.keyword+"</span> | ";
+				if(sessionStorage.keywordname)
+					srch_cond += "<span> Keyword_name - "+sessionStorage.keywordname+"</span> | ";
+					
+				if(srch_cond){	
+					srch_cond1=srch_cond.replace(/(\s+)?.$/, '');
+					$("#srch_tags").append(srch_cond1);
+				}
+				else {
+              		$("#srch_tags").html('<span>Property Type- All Property Types </span>| <span>Listing Type- All Listing Types </span>|<span> Location- All Locations </span>');
+				}
+				}
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			        	$('#property_listview').empty(); // empty the page before show the event list
+			        	$('#paging_button').html('');
+
+			       		var i=0;
+			        	var isFeatSet = 0;
+						map_address =[];  mapcontent = [] ;
+					
+			        	if( data.listings.length ) {
+				        	$.each(data.listings,function(i,item){
+								var image;
+								item.Listing.price = toUSD(Math.round(item.Listing.price));
+					        	if( typeof item.Listing.image_name == "undefined"  || item.Listing.image_name == ""){
+					        		image = sessionStorage.WEBROOT+"images/"+"no_img_thumb.jpg"+''+list_thumb;
+					        		
+					        	}else{
+					        		image = item.Listing.image_name+""+list_thumb;
+						        }
+					   
+					        	var call = "javascript:property_detail('"+item.Listing.uuid+"')";var val= item.Listing.property_type;
+						        if(i == 0 && item.Listing.isFeatured == "1"){
+						        if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land"  || val == "Office" || val == "Shop" || val == "Warehouse" || val == "Restaurant" || val == "Apartment Block" || val == "Other" ){
+							     	//if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land" || val == "Room"){
+					        			li='<li class="head_li"><a href="'+call+'"> <img src="'+image+'"><h2>Featured Listing</h2><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +item.State.state_name+ '</label><label>'+'$ '+item.Listing.price+ '</label></p></a></li>';
+							     	}else{
+							     		li='<li class="head_li"><a href="'+call+'"> <img src="'+image+'"><h2>Featured Listing</h2><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +item.State.state_name+ '</label><label>'+'$ '+item.Listing.price+ '</label><label>Bed- '+item.Listing.no_of_bedrooms+ '   Bath- '+item.Listing.no_of_bathrooms+'</label></p></a></li>';
+									}
+							     	isFeatSet++;
+								}else{
+								if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land"  || val == "Office" || val == "Shop" || val == "Warehouse" || val == "Restaurant" || val == "Apartment Block" || val == "Other" ){
+									//if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land" || val == "Room"){
+						        		li='<li class="hide_list"><a href="'+call+'"> <img src="'+image+'"><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +item.State.state_name+ '</label><label>' +'$ '+item.Listing.price+ '</label></p></a></li>';
+									}else{
+										li='<li class="hide_list"><a href="'+call+'"> <img src="'+image+'"><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +item.State.state_name+ '</label><label>' +'$ '+item.Listing.price+ '</label><label>Bed- '+item.Listing.no_of_bedrooms+ '   Bath - '+item.Listing.no_of_bathrooms+'</label></p></a></li>';
+									}
+								}
+						        var prop_address = item.Listing.address1+","+item.Listing.address2+","+item.State.state_name+", Barbados";
+					        	var latilong = item.Listing.latitude+","+item.Listing.longitude;
+					        	if(item.Listing.address2 == null || item.Listing.address2 == ""){
+					        		prop_address = item.Listing.address1+","+item.State.state_name+", Barbados";
+					        	}
+						        map_address.push(latilong);
+								mapcontent.push('<a href="'+call+'">'+prop_address+'</a>') ;
+								$('#property_listview').append(li);
+							    i++;
+				        	});
+				        	var offset = ( parseInt( data.paging.pageNum ) - 1 ) * parseInt( data.paging.rowsPerPage );
+							var start = parseInt( offset ) + 1;
+							var end = parseInt( offset ) + parseInt( data.paging.rowsPerPage );
+							if( parseInt( end ) > parseInt( data.paging.TotalCount ) )
+								end =  data.paging.TotalCount;
+							$("#List_pag_count").html('Displaying '+start+' - '+end+' of '+data.paging.TotalCount+' Results');
+                            var pg = '';
+							if( data.paging.pageNum > 1 ) {
+								pg += '<a href="#" class="paging_btn" onclick="pagination('+data.paging.prev+');" data-role="button" data-icon="arrow-l" data-iconpos="left" data-mini="true" data-inline="true" data-theme="a" class="pre" >Prev 10</a>';
+							}
+							if( data.paging.next != '' && data.paging.pageNum < data.paging.next ) {
+								pg += '<a href="#" id="next_btn" class="paging_btn next" onclick="pagination('+data.paging.next+');" data-role="button" data-icon="arrow-r" data-iconpos="right" data-mini="true" data-inline="true" data-theme="a" class="next" >Next 10</a>';
+							}
+                                $('#paging_button').append(pg);
+                                $('.paging_btn').buttonMarkup( "refresh" );
+									
+
+				        	
+			        	} else {
+			        	$("#List_pag_count").html("Displaying  0 - 0 of 0 Results ");
+			        		li = '<li style="color:red;">No Properties Found for your search criteria</li>'; // message if no event found
+					 		$('#property_listview').append(li);
+			        	}
+			        	if( data.listings.length == 1 && isFeatSet > 0 ) {
+			        		$("#List_pag_count").html("Displaying  0 - 0 of 0 Results ");
+			        		li = '<li style="color:red;">No Properties Found for your search criteria</li>'; // message if no event found
+					 		$('#property_listview').append(li);
+			        	}
+			        	$('#property_listview').listview('refresh');
+					  	show_maplist(map1);
+						 // after append event to page refreshing the listview
+			        }
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+			}
+			
+			function show_maplist(map){
+				//alert("sdsd");
+				for (var i = 0; i < markersArray.length; i++ ) {
+				    markersArray[i].setMap(null);
+				  }
+				  markersArray = [];
+				//google.maps.visualRefresh = true;
+				for(var n = 0; n < map_address.length; n++) {
+					var point = geocoding_address(map_address[n],mapcontent[n],map,"list");
+				}
+				google.maps.event.trigger(map, 'resize');
+			}
+			
+			function geocoding_address(address,content,map,zom_type){
+				address = address.split(",");
+				
+				address = new google.maps.LatLng(address[0],address[1]);
+				if(zom_type == "single"){
+					map.setCenter(address);
+					map.setZoom(14);
+				}
+				marker = new google.maps.Marker({
+	     			map: map,
+	      			position: address});
+					markersArray.push(marker);
+					makeInfoWindowEvent(map, infowindow, content, marker);	
+				/*var geocoder = new google.maps.Geocoder();
+				geocoder.geocode( { "address": address }, function(results, status) {
+					google.maps.event.trigger(map, 'resize');
+					if (status == google.maps.GeocoderStatus.OK) {
+						//alert(results[0].geometry.location);
+						if(zom_type == "single"){
+							map.setCenter(results[0].geometry.location);
+							map.setZoom(14);
+						}
+						marker = new google.maps.Marker({
+			     			map: map,
+			      			position: results[0].geometry.location});
+							markersArray.push(marker);
+							makeInfoWindowEvent(map, infowindow, content, marker);	
+				  	} else {
+				    		//alert(address);
+				  	}	
+				});*/
+			}
+			
+			function makeInfoWindowEvent(map, infowindow, contentString, marker1) {
+				google.maps.event.addListener(marker1, 'click', function() {
+					infowindow.setContent(contentString);
+					infowindow.open(map, marker1);
+				});
+			}
+			
+			function property_detail( uuid ) {
+				sessionStorage.listUuid = uuid;
+				$.mobile.changePage('#property_info', { transition: "slideup",forward: true} );
+			}
+				
+		</script>
+		<div data-role="page" class="ui-responsive-panel property_info_page" id="property_info">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+	    		<h1 id= "pDetailTitle"></h1>
+	    		<div class="right_btn_top">
+	    		<a href="javascript:jumpScroll(1200)" id="#advertisor_req">Request Info</a>
+	    		</div>
+    		</div>
+  			<!-- /header -->
+  			<div data-role="content" class="pad0">
+  				<div id="info-overlay" data-role="popup" data-overlay-theme="a" class="ui-content overlay">
+  					<p id="info-overlay_msg"></p>
+				</div>
+    			<div class="main_info_box prft_box rds5_box">
+      				<div id="PhotoSwipeTarget"></div>
+      				<div id="Indicators">
+					
+					</div>
+      				<div class="details">
+	      				<h3 id= "pDetailTitle1" ></h3>
+	      				<p><strong class ="paddres"></strong><a href="javascript:jumpScroll(550)">View Directions</a></p>
+	      				<p style="word-wrap:break-word" id="pdescription"></p>
+      				</div>
+    			</div>
+    			<div class="inner_pad">
+      				<div class="listing_info_box prft_box rds5_box">
+        				<h3>Listing Info</h3>
+        				<ul class="text_form border_list">
+        					<li>
+	            				<label class="field_label">Address</label>
+	            				<span class="field_value paddres"></span>
+            				</li>
+            				<li>
+	            				<label class="field_label">Parish</label>
+	            				<span class="field_value pparish"></span>
+            				</li>
+            				<li>
+            					<label class="field_label">Price</label>
+            					<span class="field_value" id ="plistPRICE"></span>
+            				</li>
+            				 <li  id="lBedrooms">
+            					<label class="field_label">Bed</label>
+            					<span class="field_value" id ="pBedrooms"></span>
+            				</li>
+                            <li id="lBathrooms">
+            					<label class="field_label">Bath</label>
+            					<span class="field_value" id ="pBathrooms"></span>
+            				</li>
+          					<li>
+					            <label class="field_label">Listing ID</label>
+					            <span class="field_value" id ="plistID"></span> 
+							</li>
+          					<li>
+            					<label class="field_label">Listing Type</label>
+            					<span class="field_value" id ="plistTYPE"></span> </li>
+          					<li>
+            					<label class="field_label">Property Type</label>
+            					<span class="field_value" id ="pTYPE"></span>
+            				</li>
+                           
+          				<li>
+            					<label class="field_label">Square Feet</label>
+            					<span class="field_value" id ="plistSIZE"></span>
+            				</li>
+          				
+        				</ul>
+      				</div>
+      				<div class="location_box prft_box rds5_box">
+        				<h3>Location</h3>
+						<div style="height: 262px; width: 97%;"id="info_map" ></div>
+					</div>
+      				<div class="features_box prft_box rds5_box">
+						<h3>Features</h3>
+        				<ul data-role="listview" class="border_list" id ="featureList"></ul>
+      				</div>
+      				<div id="advertisor" class="add_info_box prft_box rds5_box">
+        				<h3>Vendor  Information</h3>
+				         <div style="float:left;width:100px;height:100px;overflow:hidden;"><img style="width: 100px; height: 100px;" id ="profile_img" /></div>
+        				 <ul class="text_form border_list usr_det" style="min-height:100px;margin:0 0 15px 10px;float:left;'">
+          					<li>
+            					<!-- <label class="field_label">Vendor</label> -->
+            					<span class="field_value" id="Adv_name"></span>
+            				</li>
+          					<li id="ad_company"></li>
+          					<li>
+            					<!-- <label class="field_label">Phone Number</label> -->
+            					<span class="field_value" id="Adv_phno"></span>
+            				</li>
+          					<li>
+            					<!-- <label class="field_label">Email Address</label> -->
+            					<span class="field_value" id ="Adv_email"></span> 
+            				</li>
+        				</ul>
+        				<form id="req_info">
+        					<input type="hidden" id="listings_id">
+	        				<input name ="email" id="req_emailid" type="text" placeholder="Email Address" maxlength="50">
+	        				<div class="valid_text" id="invalid-req_emailid"></div>
+	        				<input name ="telephone" id ="telephone_req" type="text" placeholder="Telephone Number" >
+	        				<div class="valid_text" id="invalid-telephone_req"></div>
+	        				<textarea name="description" cols="40" rows="8" name="textarea" id="description_request" disabled="disabled">Good Day,</br>I found your listing on<a href="http://realtyonthego.bb/">http://realtyonthego.bb/</a> and would like more information about this property at”.</br>Thank you</textarea>
+	        				<input id ="req_info_btn" value="Request Info" data-theme="b" type="button" >
+        				</form>
+      				</div>
+    			</div>
+  			</div>
+  			<!-- /content -->
+  			<div style="min-height: 8%;" data-role="footer" data-position="fixed" class="ui-bar pro_info_footer">
+    		 <a href="#" data-role="button" onclick="javascript:window.history.back(-1);return false;" data-icon="back">Back</a>
+             <a href="#transitionExample" data-transition="slidedown" data-role="button" onclick="update_favourite()"  id="fav" class ="ui-btn-right addas_fav" data-icon="star" data-inline="true" data-rel="popup" data-position-to="window">Favourite </a> 
+             <!-- <a href="#" data-icon="gear" data-mini="true" class="ui-btn-right st_sharethis_custom" >Share</a>--> </div>
+  			<!-- /footer -->
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  			<!-- /panel -->
+		</div>
+		<script type="text/javascript">
+			function jumpScroll(b) {
+			   	window.scroll(0,b); // horizontal and vertical scroll targets
+			}
+			function image_slider(image_path) {
+				(function(window, Util, PhotoSwipe){
+					//Util.Events.domReady(function(e){
+					instance = PhotoSwipe.attach(
+									image_path,
+									{
+										target: window.document.querySelectorAll('#PhotoSwipeTarget')[0],
+										preventHide: true,
+										getImageSource: function(obj){
+											return obj.url;
+										},
+										getImageCaption: function(obj){
+											return obj.caption;
+										}
+									}
+								);
+					
+					indicators = window.document.querySelectorAll('#Indicators span');
+					
+					// onDisplayImage - set the current indicator
+					instance.addEventHandler(PhotoSwipe.EventTypes.onDisplayImage, function(e){
+						
+						var i, len;
+						for (i=0, len=indicators.length; i<len; i++){
+							indicators[i].setAttribute('class', '');
+						}
+						
+						indicators[e.index].setAttribute('class', 'current');
+					});
+					
+					instance.show(0);
+					//});
+					$( "#property_info" ).on( "pagehide", function( event, ui ) {
+						var photoSwipeInstance = PhotoSwipe.getInstance($(instance).attr('id'));
+						if (typeof photoSwipeInstance != "undefined" && photoSwipeInstance != null) {
+							PhotoSwipe.unsetActivateInstance(photoSwipeInstance);
+							PhotoSwipe.detatch(photoSwipeInstance);
+						}
+						return true;
+					});
+					
+				}(window, window.Code.Util, window.Code.PhotoSwipe));
+			}
+				
+				
+			
+				
+				
+				
+				
+				
+				
+			
+			$( '#property_info' ).off('pageshow').on( 'pageshow',function() {
+				//$('#pDetailTitle').html(sessionStorage.propertyType);
+				var id ="";
+				$("#fav").show();
+				if( sessionStorage.USERID !="" || typeof sessionStorage.USERID !="undefined" || sessionStorage.USERID != null ){
+					id = sessionStorage.USERID;
+				}
+				side_link();
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'uuid' : sessionStorage.listUuid, 'user_id' :id, 'mode' : 'PropertyDetail' };
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			        	$('#featureList').empty();
+			        	var data = data[0];
+			        	if(data.Meta){
+			        		$("meta[property='og\\:title']").attr('content', data.Meta.title);
+			        		$("meta[property='og\\:url']").attr("content","Click here to view "+data.Meta.url);
+			        		$("meta[property='og\\:site_name']").attr('content', data.Meta.site_name);
+			        		$("meta[property='og:image']").attr('content', data.Meta.image);
+			        		//$("meta[property='og\\:description']").attr('content', data.Meta.description);
+			        		$("meta[property='title']").attr('content', data.Meta.title);
+			        		$("meta[property='url']").attr("content","Click here to view "+data.Meta.url);
+			        		$("meta[property='site_name']").attr('content', data.Meta.site_name);
+			        		$("meta[property='image']").attr('content', data.Meta.image);
+			        		//$("meta[property='description']").attr('content', data.Meta.description);
+			        		//$('og:image').attr('content', data.Meta.image);
+			        		//$("meta[name=description]").attr('content', data.Meta.description);
+						}
+			        	if(id != "" && id != null && typeof id !="undefined" && id == data.User.id){
+			        		$("#fav").hide();
+			        	}
+			        	if( data.Listing.id ) {
+			        		$('#pDetailTitle').html(data.Listing.address1);
+				        	if(data.Listing.address1.length > 15){
+				        		$('#pDetailTitle').html(data.Listing.address1.slice(0,14)+"...");
+					        }
+                          
+                           	data.Listing.price = toUSD(Math.round(data.Listing.price));
+				        	$('#pDetailTitle1').html(data.Listing.property_type+" | "+"$ "+data.Listing.price);
+				        	$('#pdescription').html(data.Listing.description);
+				        	$('.paddres').html(data.Listing.address1+" "+data.Listing.address2);
+				        	$('.pparish').html(data.State.state_name);
+				        	$('#plistID').html(data.Listing.listingID);
+				        	$('#plistTYPE').html(data.Listing.listing_type);
+				        	$('#pTYPE').html(data.Listing.property_type);
+                            $('#pBedrooms').html(data.Listing.no_of_bedrooms);
+                            $('#pBathrooms').html(data.Listing.no_of_bathrooms);
+                            $("#listings_id").val(data.Listing.id);
+				        	$('#plistPRICE').html("$ "+data.Listing.price);
+				        	$('#plistSIZE').html(numberWithCommas(data.Listing.size+" Sq.Feet"));
+				        	$('#description_request').val('Good Day,\n I found your listing on http://realtyonthego.bb/ and would like more information about this property at '+data.Listing.address1+" "+data.Listing.address2+" "+data.State.state_name+'.\n Thank you');
+				        	var mapp = new google.maps.Map(document.getElementById("info_map"), mapOptions);
+				        	var prop_address = data.Listing.address1+","+data.Listing.address2+","+data.State.state_name+", Barbados";
+				        	if(data.Listing.address2 == null || data.Listing.address2 == ""){
+				        		prop_address = data.Listing.address1+","+data.State.state_name+", Barbados";
+				        	}
+				        	var latilong = data.Listing.latitude+","+data.Listing.longitude;
+				        	geocoding_address(latilong,prop_address,mapp,"single");
+                            var val= data.Listing.property_type;
+                            if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land"  || val == "Office" || val == "Shop" || val == "Warehouse" || val == "Restaurant" || val == "Apartment Block" || val == "Other" ){
+                           // if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land" || val == "Room"){
+						        		         $('#lBedrooms').hide();
+                                                  $('#lBathrooms').hide();           }                
+                        else{
+                                      $('#lBedrooms').show(); 
+                                      $('#lBathrooms').show(); 
+                            }
+                            
+							if(data.ListingFeature.length){
+				        		$.each(data.ListingFeature,function(i,item){
+					        		$('#featureList').append('<li>'+item.features+'</li>');
+				        		});
+				        	}
+		        			if(data.User.id){
+			        					
+			        			$('#Adv_name').html(data.User.name);
+			        			$('#Adv_phno').html(data.User.telephone);
+			        			$('#Adv_email').html(data.User.email_address);
+								$('#profile_img').attr('src',data.User.profile_image);
+			        			
+			        			if(data.User.usertype == "Corporate" ){
+			        				$('#ad_company').html('<span class="field_value" id="Adv_company">'+data.User.company_name+'</span>');
+			        			}else{
+			        				$('#ad_company').html('');
+				        		}
+			        			if( data.User.usertype == "Corporate"){
+			        				if(typeof data.agent != "undefined" || data.Agent != null ){
+				        				$('#Adv_name').html(data.Agent.name);
+					        			$('#Adv_phno').html(data.Agent.telephone);
+					        			$('#Adv_email').html(data.Agent.email_address);
+					        			$('#profile_img').attr('src',data.Agent.profile_image);
+					        			
+			        				}
+			        			}	
+							}
+                                  if( ( typeof data.isFavorite != "undefined" || data.isFavorite != null) && (data.isFavorite.check)){
+								$('.addas_fav').attr('data-theme', 'b');
+								$('.addas_fav').buttonMarkup( "refresh" );
+							}else{
+								$('.addas_fav').attr('data-theme', 'a');
+                                $('.addas_fav').buttonMarkup( "refresh" );
+
+								}
+					       	var image = {path: [] };
+					       //console.log(data)
+					       $('#Indicators').html('');
+							if(typeof data.ListingImage !="undefined" && data.ListingImage.length >= 1){
+								$.each(data.ListingImage,function(i,item){
+								
+				        			$('#Indicators').append('<span></span>');
+									//$('#prop_image').append('<img src="'+sessionStorage.WEBROOT+'files/listing_images/'+item.image_name+'" width="200"/>');
+				        			image.path.push({ url: sessionStorage.WEBROOT+'files/listing_images/'+item.image_name+''+info_thumb, caption: item.image_name} );
+			        			});
+							} else {
+								//$('#Indicators').append('<span></span>');
+								//$('#prop_image').append('<img src="'+sessionStorage.WEBROOT+'no_image.jpeg" width="200"/>');
+								image.path.push({ url: sessionStorage.WEBROOT+'images/no_img_thumb.jpg'+''+info_thumb, caption: "no image"} );
+							}
+							image_slider(image.path);
+			        	} else {
+			        		//li = '<li style="color:red;">No Event(s) Found</li>'; // message if no event found
+					 		//$('#property_listview').append(li);
+			        	}
+			        	$('#featureList').listview('refresh'); // after append event to page refreshing the listview
+			        }
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},2000);
+				
+				if( sessionStorage.USERID !="" || typeof sessionStorage.USERID !="undefined" || sessionStorage.USERID != null ){
+					var myKeyVal = { 'user_id' : sessionStorage.USERID,'listing_id' : $("#listings_id").val(), 'mode' : 'NotificationCount'};
+					$.ajax({
+				    	type: 'POST',
+				        url: url,
+				        async: false,
+				        data: myKeyVal,
+				        dataType: 'json',
+				        success: function(data) {
+				        	sessionStorage.NOTIFICATION_COUNT = data;
+				        	side_link();
+				        }
+				    });
+				}	    
+			});
+			
+			function update_favourite(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+  					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+  				}else{
+  					$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+  					//set variable for ajax post method for search event
+  					var myKeyVals = { 'user_id' : sessionStorage.USERID,'listing_id' : $("#listings_id").val(), 'mode' : 'UpdateFavourite'};
+  					$.ajax({
+  				    	type: 'POST',
+  				        url: url,
+  				        async: false,
+  				        data: myKeyVals,
+  				        dataType: 'json',
+  				        success: function(data) {
+  					        if(data.length)
+  	  					        var msg ="We will keep you informed about this listing";
+	  					        
+	  					        if(data == "removed"){
+									msg = "You no longer follow this listing";
+									$('.addas_fav').attr('data-theme', 'a');
+									$('.addas_fav').buttonMarkup( "refresh" );
+		  					      }else{
+		  					    	$('.addas_fav').attr('data-theme', 'b');
+									$('.addas_fav').buttonMarkup( "refresh" );
+			  					  }
+  					        	setTimeout(function(){
+  				        			pop('info-overlay','success_popup',msg);
+  					        	},1000);
+  					      	}
+  				    });
+  					//hide loading message.
+  					setTimeout(function(){
+  						$.mobile.loading( 'hide');
+  					},1000);
+  				}
+			}
+			
+			function mobile_req__info(){
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'email_address' : $("#req_emailid").val(),'phone_number' : $("#telephone_req").val(),'content' : $("#description_request").val(),'listing_id':$("#listings_id").val(), 'mode' : 'RequestInfo'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+				        if(data.length)
+                                pop('info-overlay','success_popup','Your request has been sent successfully');
+                                $('#req_emailid').val('');
+                                $('#telephone_req').val('');
+				      	}
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+			}
+				
+		</script>
+		<div data-role="page" class="jqm-demos ui-responsive-panel" id="mysaved_search_page">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>My Saved Searches</h1>
+  			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+    			<ul data-role="listview" data-inset="true" class="mr0" id="savedlist">
+    			</ul>
+  			</div>
+  			<!-- /content -->
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  			<!-- /panel -->
+		</div>
+		<script type="text/javascript">
+			$( '#mysaved_search_page' ).off('pageshow').on( 'pageshow',function() {
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+  					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+  				}
+				side_link();
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'user_id' :sessionStorage.USERID , 'mode' : 'SavedSearches'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+				        var list="" ;
+				        $('#savedlist').empty();
+				   	if( data.length ){
+				      	$.each(data,function(i,item){
+				      	
+							var call = "javascript:savesearch('"+item.SavedSearch.id+"')";
+							
+							$('#savedlist').append( '<li><a href="'+call+'">'+item.SavedSearch.search_name+'</a></li>');
+							
+				       		});
+			} else {
+				        	$('#savedlist').append( '<li style="color:red;">No Saved searches found.</li>'); // message if no event found
+					    }    	
+						$('#savedlist').listview('refresh');
+					}
+				});
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+			});
+			
+			function savesearch(id){
+			$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'saved_search_id' :id , 'mode' : 'SavedSearche_details'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			        	sessionStorage.propertyType = data.SavedSearch.property_type;
+			        	sessionStorage.listingType = (data.SavedSearch.listing_type == null)?'':data.SavedSearch.listing_type;
+						sessionStorage.noBedroom = data.SavedSearch.no_of_bedrooms;
+						sessionStorage.noBathroom = data.SavedSearch.no_of_bathrooms;
+						sessionStorage.priceFrom = (data.SavedSearch.min_price == null)?'0':data.SavedSearch.min_price;
+						sessionStorage.priceTo = (data.SavedSearch.max_price == null)?'0':data.SavedSearch.max_price;
+						sessionStorage.location = (data.SavedSearch.state_id == null)?'0':data.SavedSearch.state_id;
+						sessionStorage.sizeFrom = (data.SavedSearch.min_size == null)?'0':data.SavedSearch.min_size;
+						sessionStorage.sizeTo = (data.SavedSearch.max_size == null)?'0':data.SavedSearch.max_size;
+						sessionStorage.keyword = data.SavedSearch.keyword;
+						sessionStorage.keywordname = (data.SavedSearch.keyword_name == null)?'':data.SavedSearch.keyword_name;
+						sessionStorage.saved_search_name = data.SavedSearch.search_name;
+						
+						//alert(sessionStorage.listingType);
+						sessionStorage.sizelist = "Listing.created DESC";
+						
+						$.mobile.changePage('#property_list', { transition: "slideup",forward: true} );
+												
+					}
+			    });
+				//hide loading message.
+				
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+			}
+		</script>
+		<div data-role="page" class="jqm-demos ui-responsive-panel" id="mynotification_page">
+			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+				<h1>Notifications</h1>
+			</div>
+			<!-- /header -->
+			<div data-role="content" class="">
+				<ul data-role="listview" data-inset="true" class="mr0" id="notificationlist">
+				</ul>
+			</div>
+			<!-- /content -->
+			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+				<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+				<div class="prft_box btn_box">
+					<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+			</div>
+			<!-- /panel -->
+		</div>
+		<script type="text/javascript">
+			$( '#mynotification_page' ).off('pageshow').on( 'pageshow',function() {
+				if( sessionStorage.USERID=="" || typeof sessionStorage.USERID=="undefined" || sessionStorage.USERID== null){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+				}
+				side_link();
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'user_id' :sessionStorage.USERID, 'mode' : 'Notifications'};
+				$.ajax({
+					type: 'POST',
+					url: url,
+					async: false,
+					data: myKeyVals,
+					dataType: 'json',
+					success: function(data) {
+						var list="" ;
+						$('#notificationlist').empty();
+						if(data.length){
+							$.each(data,function(i,item){
+								var call = "javascript:property_detail('"+item.Listing.uuid+"')";
+								$('#notificationlist').append( '<li><a href="'+call+'">'+'<img src="'+item.Listing.image_name+'"><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>'+item.Listing.state_id+'<br/>$ '+item.Listing.price+'<br/><i>Updated on '+item.Listing.modified+'</i></label></p></a></li>');
+							});
+						}else{
+							$('#notificationlist').append('<li style="color:red;">No Notifications found.</li>'); 
+						}
+						$('#notificationlist').listview('refresh');
+						
+					}	
+				});
+				//hide loading message.
+				setTimeout(function(){
+				$.mobile.loading( 'hide');
+				},1000);
+        	});
+		</script>
+		<div data-role="page" class="jqm-demos ui-responsive-panel" id="fav_property_list">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+				<h1 id="fav_listTiltle">My Favourites</h1>
+				<div class="sort_by">
+			 		<select name="select-sort" id="fav_select-sort" data-iconpos="left" data-native-menu="false">
+			        	<option value="Listing.created DESC">Sort</option>
+				        <option value="Listing.price ASC">Price (Low to High)</option>
+				        <option value="Listing.price DESC">Price (High to Low)</option>
+				        <option value="Listing.size ASC">Square Feet (Low to High)</option>
+				        <option value="Listing.size DESC">Square Feet (High to Low)</option>
+				        <option value="Listing.no_of_bedrooms ASC">Bed(Low to High)</option>
+				        <option value="Listing.no_of_bedrooms DESC">Bed(High to Low)</option>
+				        <option value="Listing.no_of_bathrooms ASC">Bath(Low to High)</option>
+				        <option value="Listing.no_of_bathrooms DESC">Bath(High to Low)</option>
+			      	</select>
+    			</div>
+  			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+    			<ul data-role="listview" id="fav_property_listview" data-inset="true" class="thumb_list">
+    			</ul>
+    			<div style="clear:both;width:100%;text-align:right;">
+					<div class="paginate" id="fav_paging_button">
+					</div>
+				</div>
+  			</div>
+  			<!-- /content -->
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  			<!-- /panel -->
+		</div>
+		<script type="text/javascript">
+			$( '#fav_property_list' ).off('pageshow').on( 'pageshow',function() {
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+  					$.mobile.changePage('#login', { transition: "slideup",forward: true} );return;
+  				}
+				side_link();
+				sessionStorage.sizelist = "Listing.created DESC";
+				fav_load_list();
+			});
+			
+			$( "#fav_select-sort" ).change(function() {
+				sessionStorage.sizelist = $( "#fav_select-sort" ).val();
+				fav_load_list();
+			});
+			
+			function fav_pagination(num){
+				sessionStorage.page = num;
+				load_list();
+			}
+			
+			function fav_load_list(){
+				//code to execute before the page is displayed.
+				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'user_id' : sessionStorage.USERID, 'mode' : 'FavouriteList','page' : '1', 'sort' : sessionStorage.sizelist};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+			       $('#fav_next_btn').show(); 
+					$('#fav_property_listview').empty(); // empty the page before show the event list
+			        	if( typeof data.listings !="undefined" ) {
+				        	$.each(data.listings,function(i,item){
+				        		item.Listing.price = toUSD(Math.round(item.Listing.price));
+					        	var image;
+					        	if( typeof item.Listing.image_name == "undefined"  || item.Listing.image_name == ""){
+					        		image = sessionStorage.WEBROOT+"images/"+"no_img_thumb.jpg"+''+list_thumb;
+					        	}else{
+					        		image = item.Listing.image_name+""+list_thumb;
+						        }
+					        	var call = "javascript:property_detail('"+item.Listing.uuid+"')";var val= item.Listing.property_type;
+						       if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land"  || val == "Office" || val == "Shop" || val == "Warehouse" || val == "Restaurant" || val == "Apartment Block" || val == "Other" ){
+									//if(val == "Commercial Property" || val == "Commercial Land" || val == "Commercial Unfinished Structure" || val == "" || val == "Residential Land" || val == "Room"){
+						        		li='<li><a href="'+call+'"> <img src="'+image+'"><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +'$ '+item.Listing.price+ '</label></p></a></li>';
+									}else{
+										li='<li><a href="'+call+'"> <img src="'+image+'"><p><label>'+item.Listing.address1+' '+item.Listing.address2+'</label><label>' +'$ '+item.Listing.price+ '</label><label>Bed- '+item.Listing.no_of_bedrooms+ '</br> Bath - '+item.Listing.no_of_bathrooms+'</label></p></a></li>';
+									}
+					        	//var landmark = ''+' ' + ' ' +  ' ' + '  ' + ' ' + item.Listing.address2+' ' + ''+item.State.state_name+ '';								
+                                $('#fav_property_listview').append(li);
+					        	// appent the each event to page as list
+				        	});
+				        	$('#fav_paging_button').html('');
+							var pg = '';
+							if( data.paging.pageNum > 1 ) {
+								pg += '<button onclick="fav_pagination('+data.paging.prev+');" class="btn btn-theme btn-xs" type="button">Prev 10</button>';
+							}
+							if( data.paging.next != '' && data.paging.pageNum < data.paging.next ) {
+								pg += '<button onclick="fav_pagination('+data.paging.next+');" style= "display:none;" id="fav_next_btn" class="btn btn-theme btn-xs" type="button">Next 10</button>';
+							}
+				        	$('#fav_paging_button').append(pg);
+			        	} else {
+			        		li = '<li style="color:red;">No Favourite properties found.</li>'; // message if no event found
+					 		$('#fav_property_listview').append(li);
+			        	}
+			        	
+			        	$('#fav_property_listview').listview('refresh'); // after append event to page refreshing the listview
+			        }
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+			}
+			/*function property_detail( uuid ) {
+				sessionStorage.listUuid = uuid;
+				$.mobile.changePage('#property_info', { transition: "slideup",forward: true} );
+			}	*/
+		</script>
+		<div data-role="page" class="ui-responsive-panel" id="services">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Services</h1>
+			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+    			<div class="bg_form_box rds5_box" id="about_content">
+        		</div>
+  			</div>
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  		</div>
+  		<script type="text/javascript">
+  			$( '#services' ).off('pageshow').on( 'pageshow',function() {
+  				
+  				side_link();
+  				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'page_id' : 1, 'mode' : 'CmsPage'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+						if( typeof data.Cmspage.content != "undefined" && data.Cmspage.content !="" ){
+							$("#about_content").html( data.Cmspage.content );
+				        }
+			        }    
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+  			});
+  		</script>
+  		<div data-role="page" class="ui-responsive-panel" id="term_condition_page">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Terms And Conditions</h1>
+			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+    			<div class="bg_form_box rds5_box" id="terms_content">
+        		</div>
+  			</div>
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  		</div>
+  		<script type="text/javascript">
+  			$( '#term_condition_page' ).off('pageshow').on( 'pageshow',function() {
+  				side_link();
+  				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'page_id' : 2, 'mode' : 'CmsPage'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+						if( typeof data.Cmspage.content != "undefined" && data.Cmspage.content !="" ){
+							$("#terms_content").html( data.Cmspage.content );
+				        }
+			        }    
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+  			});
+  		</script>
+  		<div data-role="page" class="ui-responsive-panel" id="privacy_policy_page">
+  			<div data-role="header" data-theme="a" data-position="fixed"> <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+    			<h1>Privacy Policy</h1>
+			</div>
+  			<!-- /header -->
+  			<div data-role="content" class="">
+    			<div class="bg_form_box rds5_box" id ="privacy_content">
+        		</div>
+  			</div>
+  			<div data-role="panel" data-position-fixed="true" data-theme="a" id="nav-panel" class="side_bar">
+    			<ul data-role="listview" data-theme="a" class="nav-search" data-count-theme="b">
+      				<li class="log_li user_li"><a class ="login_link" href="#">Login</a></li>
+      				<li class ="side_home"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Home</a></li>
+      				<li class ="my_accnt_link"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Account</a></li>
+      				<li class = "side_propety_search"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Property Search</a></li>
+      				<li class ="side_myfavorite" ><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Favourites</a></li>
+      				<li class ="side_mysearch"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">My Saved Searches</a></li>
+      				<li class="side_mynotification"><a href="#panel-fixed-page2"><img src="images/tick.png" alt="" class="ui-li-icon">Notifications<span class="ui-li-count">0</span></a></li>
+      				
+    			</ul>
+    			<div class="prft_box btn_box">
+    				<a href="#term_condition_page" class ="to_terms_cond" data-role="button" data-theme="b" data-mini="true" data-inline="true" target="_blank">Terms & Conditions</a>
+        			<a href="#privacy_policy_page"  class="to_privacy" data-role="button" data-theme="b" data-mini="true" data-inline="true"  target="_blank">Privacy Policy</a></div>
+  			</div>
+  		</div>
+  		<script type="text/javascript">
+  			$( '#privacy_policy_page' ).off('pageshow').on( 'pageshow',function() {
+  				side_link();
+  				$.mobile.loading( 'show', { theme: "b", text: "Loading...", textonly: false ,textVisible: true});
+				//set variable for ajax post method for search event
+				var myKeyVals = { 'page_id' : 3, 'mode' : 'CmsPage'};
+				$.ajax({
+			    	type: 'POST',
+			        url: url,
+			        async: false,
+			        data: myKeyVals,
+			        dataType: 'json',
+			        success: function(data) {
+						if( typeof data.Cmspage.content != "undefined" && data.Cmspage.content !="" ){
+							$("#privacy_content").html( data.Cmspage.content );
+				        }
+			        }    
+			    });
+				//hide loading message.
+				setTimeout(function(){
+					$.mobile.loading( 'hide');
+				},1000);
+  			});
+  			
+			function pop(id,type,msg){
+				$('#'+id+'_msg').html(msg);
+				$('#'+id).addClass(type);
+	  			$('#'+id).popup('open');
+		  		setTimeout(function(){
+					$('#'+id).popup('close');
+					$('#'+id).removeClass(type);
+				},3000);
+			}
+			
+			$('.login_link').off('click').on('click',function(){
+				sessionStorage.USERID="";
+				$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+			});
+			
+			$('.my_accnt_link').off('click').on('click',function(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}
+				$.mobile.changePage('#myaccount_page', { transition: "slideup",forward: true} );
+			});
+			
+			$('.side_propety_search').off('click').on('click',function(){
+				$.mobile.changePage('#property_search', { transition: "slideup",forward: true} );
+				
+				
+        	});
+							
+			$('.side_myfavorite').off('click').on('click',function(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}
+				$.mobile.changePage('#fav_property_list', { transition: "slideup",forward: true} );
+			});
+			
+			$('.side_mynotification').off('click').on('click',function(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}
+				$.mobile.changePage('#mynotification_page', { transition: "slideup",forward: true} );
+			});
+			
+			$('.side_mysearch').off('click').on('click',function(){
+				if( sessionStorage.USERID =="" || typeof sessionStorage.USERID =="undefined"  || sessionStorage.USERID == null ){
+					$.mobile.changePage('#login', { transition: "slideup",forward: true} );
+  					return;
+				}
+				$.mobile.changePage('#mysaved_search_page', { transition: "slideup",forward: true} );
+			});
+			
+			$('.to_about_us').off('click').on('click',function(){
+				$.mobile.changePage('#services', { transition: "slideup",forward: true} );
+			});
+			
+			/*$('.to_terms_cond').off('click').on('click',function(){
+				$.mobile.changePage('#term_condition_page', { transition: "slideup",forward: true} );
+			});*/
+			$('.side_home').off('click').on('click',function(){
+				$.mobile.changePage('#home_page', { transition: "slideup",forward: true} );
+			});
+			/*$('.to_privacy').off('click').on('click',function(){
+				$.mobile.changePage('#privacy_policy_page', { transition: "slideup",forward: true} );
+			});*/
+			
+
+
+		</script>	
+	</body>
+</html>

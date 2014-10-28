@@ -1,0 +1,17 @@
+div.error_div{ float: none; width: 78%; margin: 0 auto; display: inline;}
+.txtC{ clear: both; margin-top: 3px; }
+label.error{ padding-bottom: 0.5em; padding-top: 0.1em;}
+.side_bar .ui-panel-inner .ui-btn-up-a{background-image: none !important; background: transparent !important;}
+.side_bar .ui-panel-inner .ui-btn-hover-a{ background:#000914 !important; background-image: none !important;}
+.success_popup { background:#5CB85C; border-color:#4CAE4C; color:#FFFFFF; text-shadow: 0px 0px;}
+.error_popup { background:#D9534F; border-color:#D43F3A; color:#FFFFFF; text-shadow: 0px 0px;}
+div.ui-input-text{ clear: both;}
+.ui-footer-fixed .ui-btn-right {
+    top: 8px;
+}
+.usr_det > li {float:left;clear:both;width:inherit;}
+.usr_det li .field_value {width:auto;}
+div.ui-btn-text a.login_link{min-height:inherit !important;}
+.ui-header-fixed a.ui-btn-icon-notext{ background: none !important; background-color: none !important; background-image: none !important;padding: 2px;}
+/*
+.ui-icon-bars{ background: url('../images/ui_new_bar.png') no-repeat; width: 17px; height: 13px; position: relative; top: 1px; }*/
